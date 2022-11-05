@@ -15,7 +15,7 @@ client.on("ready", () => {
 	console.log(`Bot is online ${client.user.tag}!`);
 });
 
-client.on("messageCreate", (msg) => {
+client.on("messageCreate", async (msg) => {
     try {
         // console.log(msg)
         if (msg.author.bot) return;
@@ -24,6 +24,7 @@ client.on("messageCreate", (msg) => {
         if(msg.mentions.has(client.user.id)) {
             // Only process/add to db when tags are added
             if (msg.content.includes('#')) {
+                const repliedToMessage = await msg.channel.messages.fetch(msg.reference.messageId)
                 let messageReply = []
         
                 const tagsMessages = msg.content
@@ -33,7 +34,7 @@ client.on("messageCreate", (msg) => {
                     }
                 })
         
-                msg.reply(messageReply.join(" "))
+                msg.reply(`Question: ${repliedToMessage} \ntags: ${messageReply.join(" ")}`)
         
             } else {
                 msg.reply("sorry can't process this!");
