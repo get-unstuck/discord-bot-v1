@@ -39,7 +39,6 @@ client.on("messageCreate", (msg) => {
                 msg.reply("sorry can't process this!");
             }
         }
-
     } catch(err) {
         console.log("ERROR ", err)
     }
