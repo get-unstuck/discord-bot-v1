@@ -16,13 +16,32 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", (msg) => {
-	// console.log(msg)
+    try {
+        // console.log(msg)
+        if (msg.author.bot) return;
 
-	if (msg.author.bot) return;
-
-	if (msg.content == "answer") {
-		msg.reply("loading...");
-	}
+        // Only reply when tagged
+        if(msg.mentions.has(client.user.id)) {
+            // Only process/add to db when tags are added
+            if (msg.content.includes('#')) {
+                let messageReply = []
+        
+                const tagsMessages = msg.content
+                tagsMessages.split(" ").forEach((word) => {
+                    if(word.includes("#")) {
+                        messageReply.push(word)
+                    }
+                })
+        
+                msg.reply(messageReply.join(" "))
+        
+            } else {
+                msg.reply("sorry can't process this!");
+            }
+        }
+    } catch(err) {
+        console.log("ERROR ", err)
+    }
 });
 
 client.login(process.env.TOKEN);
