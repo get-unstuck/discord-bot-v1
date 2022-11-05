@@ -11,6 +11,17 @@ const client = new Client({
 	],
 });
 
+const getTags = (message) => {
+    let tags = []
+    message.split(" ").forEach((word) => {
+        if(word.includes("#")) {
+            tags.push(word)
+        }
+    })
+
+    return tags.join(" ")
+} 
+
 client.on("ready", () => {
 	console.log(`Bot is online ${client.user.tag}!`);
 });
@@ -25,16 +36,11 @@ client.on("messageCreate", async (msg) => {
             // Only process/add to db when tags are added
             if (msg.content.includes('#')) {
                 const repliedToMessage = await msg.channel.messages.fetch(msg.reference.messageId)
-                let messageReply = []
+    
+                // Get the Tags
+                const tags = getTags(msg.content)
         
-                const tagsMessages = msg.content
-                tagsMessages.split(" ").forEach((word) => {
-                    if(word.includes("#")) {
-                        messageReply.push(word)
-                    }
-                })
-        
-                msg.reply(`Question: ${repliedToMessage} \ntags: ${messageReply.join(" ")}`)
+                msg.reply(`Question: ${repliedToMessage} \ntags: ${tags}`)
         
             } else {
                 msg.reply("sorry can't process this!");
