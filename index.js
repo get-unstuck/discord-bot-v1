@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { createClient } = require("@supabase/supabase-js");
 const { Client, GatewayIntentBits } = require("discord.js");
 // const Intents = new Discord.Intents()
 // const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
@@ -10,6 +11,11 @@ const client = new Client({
 		GatewayIntentBits.MessageContent,
 	],
 });
+
+const supabase = createClient(
+	process.env.SUPABASE_URL,
+	process.env.SUPABASE_ANON_KEY
+);
 
 const getTags = (message) => {
 	let tags = [];
@@ -50,6 +56,23 @@ client.on("messageCreate", async (msg) => {
 
 				// Get the Tags
 				const tags = getTags(msg.content);
+
+				console.log("REPLIED ", repliedToMessage.content)
+				console.log("CONTENT ", msg.content)
+				console.log("TAGS ", tags)
+				let tagsArr = []
+				let tagsSplit = tags?.split(" ")
+				for(let item of tagsSplit) {
+					tagsArr.push(item.slice(1))
+				}
+
+				const { data, error, status } = await supabase
+					.from("questions")
+					.insert({ question: repliedToMessage.content, tags: tagsArr })
+				
+				console.log("Data ", data)
+				console.log("ERROR ", error)
+				console.log("Status ", status)
 
 				msg.reply(`Question: ${repliedToMessage} \ntags: ${tags}`);
 			} else {
